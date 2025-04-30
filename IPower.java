@@ -8,33 +8,34 @@ public interface IPower {
 }
 
 class PowerSimple implements IPower {
+
+	@Override
 	public int toPower(int n, int pow) {
-		if (pow == 0)
+		if (pow == 0) {
 			return 1;
+		}
 		int res = 1;
-		for (int i = 0; i < pow; res *= n, i++)
-			;
-		;
-		;
+		for (int i = 0; i < pow; i++) {
+			res *= n;
+		}
 		return res;
 	}
 }
 
 class PowerCached implements IPower {
-	private static Map<Integer, Map<Integer, Integer>> __cache = new HashMap<Integer, Map<Integer, Integer>>();
+	private static Map<Integer, Map<Integer, Integer>> __cache = new HashMap<>();
 
-	// resolves the inefficiency in AlmostBest
+	@Override
 	public int toPower(int n, int pow) {
-		Map<Integer, Integer> entry = PowerCached.__cache.get(n);
+		Map<Integer, Integer> entry = __cache.get(n);
 
 		if (entry == null) {
-			entry = new HashMap<Integer, Integer>();
+			entry = new HashMap<>();
+			__cache.put(n, entry);
 		}
 		return toCachedPower(entry, n, pow);
 	}
 
-	// The contract here is we know there is a cache entry so no check required
-	// (DBC)
 	private int toCachedPower(Map<Integer, Integer> e, int n, int pow) {
 		Integer res = null;
 		if (pow == 0) {
@@ -45,7 +46,7 @@ class PowerCached implements IPower {
 				return res;
 			} else {
 				res = n * toCachedPower(e, n, pow - 1);
-				e.put(pow, res); // saves each intermediate result in the cache
+				e.put(pow, res);
 			}
 		}
 		return res;
